@@ -14,9 +14,10 @@ class BoardsController extends Controller
      */
     public function index(Request $request)
     {
-        if($request->wantsJson()){
+        if($request->wantsJson == true){
             try{
                 $boards = Boards::all();
+                $boards = Boards::withTrashed()->get();
                 return response()->json([
                 'status' => 'success',
                 'data' => $boards,
@@ -76,7 +77,7 @@ class BoardsController extends Controller
     {
         try{
             $board = Boards::findOrFail($id);
-            if(request()->wantsJson()){
+            if(request()->wantsJson){
                 return response()->json([
                     'status' => 'success',
                     'data' => $board,
@@ -116,6 +117,13 @@ class BoardsController extends Controller
             $request->validate($rules);
             $board = Boards::findOrFail($id);
             $board->update($request->all());
+            if(request()->wantsJson){
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Registro actualizado correctamente',
+                    'data' => $board,
+                ], 200);
+            }
         }catch(\Exception $e){
             return response()->json([
                 'status' => 'error',
@@ -139,6 +147,12 @@ class BoardsController extends Controller
         try{
             $board = Boards::findOrFail($id);
             $board->delete();
+            if(request()->wantsJson){
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Registro eliminado correctamente',
+                ], 200);
+            }
         }catch(\Exception $e){
             return response()->json([
                 'status' => 'error',

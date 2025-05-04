@@ -1,0 +1,25 @@
+meta {
+  name: Update a board
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/boards/1?wantsJson=true
+  body: formUrlEncoded
+  auth: bearer
+}
+
+params:query {
+  wantsJson: true
+}
+
+auth:bearer {
+  token: nGOUnkkpwPO2Y6ObPCxpCvBl4kKc51bA1WCA6PHy30c215c7
+}
+
+body:form-urlencoded {
+  name: proyecto 1
+  description: algo
+}
+

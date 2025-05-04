@@ -1,0 +1,19 @@
+meta {
+  name: Show a Board
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/boards/1?wantsJson=true
+  body: none
+  auth: bearer
+}
+
+params:query {
+  wantsJson: true
+}
+
+auth:bearer {
+  token: nGOUnkkpwPO2Y6ObPCxpCvBl4kKc51bA1WCA6PHy30c215c7
+}
