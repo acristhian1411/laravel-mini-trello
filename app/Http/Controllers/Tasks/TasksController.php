@@ -1,37 +1,36 @@
 <?php
 
-namespace App\Http\Controllers\Boards;
+namespace App\Http\Controllers\Tasks;
 
-use App\Models\Boards;
+use App\Models\Tasks;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Inertia\Inertia;
-
-class BoardsController extends Controller
+class TaskController extends Controller
+class TasksController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        if($request->wantsJson == true){
-            try{
-                $boards = Boards::all();
-                $boards = Boards::withTrashed()->get();
+        try{
+            $tasks = Tasks::all();
+            if ($request->wantsJson) {
                 return response()->json([
                 'status' => 'success',
-                'data' => $boards,
+                'data' => $tasks,
             ], 200);
-            }catch(\Exception $e){
-                return response()->json([
-                    'status' => 'error',
-                    'message' => $e->getMessage(),
-                ], 500);
-            }
-        }else{
-            return Inertia::render('Boards/Index',[
-                'boards' => Boards::all()
+            }else{
+                return Inertia::render('Tasks/Index',[
+                    'tasks' => $tasks
                 ]);
+            }
+        }catch(\Exception $e){
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -54,19 +53,19 @@ class BoardsController extends Controller
                 'description' => 'required',
             ];
             $request->validate($rules);
-            $board = Boards::create($request->all());
+            $task = Tasks::create($request->all());
             if ($request->wantsJson) {
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Registro creado correctamente',
-                    'data' => $board,
+                    'data' => $task,
                 ], 200);
             }
         }catch(\Exception $e){
             return response()->json([
                 'status' => 'error',
                 'error' => $e->getMessage(),
-                'message' => 'Error al crear el tablero',
+                'message' => 'Error al crear la tarea',
             ], 500);
         }catch(\Illuminate\Validation\ValidationException $e){
             return response()->json([
@@ -83,32 +82,24 @@ class BoardsController extends Controller
     public function show(int $id)
     {
         try{
-            $board = Boards::findOrFail($id);
+            $task = Tasks::findOrFail($id);
             if(request()->wantsJson){
                 return response()->json([
                     'status' => 'success',
-                    'data' => $board,
+                    'data' => $task,
                 ], 200);
             }else{
-                return Inertia::render('Boards/Show',[
-                    'board' => $board
+                return Inertia::render('Tasks/Show',[
+                    'task' => $task
                 ]);
             }
         }catch(\Exception $e){
             return response()->json([
                 'status' => 'error',
                 'error' => $e->getMessage(),
-                'message' => 'Error al mostrar el tablero',
+                'message' => 'Error al mostrar la tarea',
             ], 500);
         }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Boards $boards)
-    {
-        //
     }
 
     /**
@@ -117,25 +108,20 @@ class BoardsController extends Controller
     public function update(Request $request, int $id)
     {
         try{
-            $rules = [
-                'name' => 'required',
-                'description' => 'required',
-            ];
-            $request->validate($rules);
-            $board = Boards::findOrFail($id);
-            $board->update($request->all());
+            $task = Tasks::findOrFail($id);
+            $task->update($request->all());
             if(request()->wantsJson){
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Registro actualizado correctamente',
-                    'data' => $board,
+                    'data' => $task,
                 ], 200);
             }
         }catch(\Exception $e){
             return response()->json([
                 'status' => 'error',
                 'error' => $e->getMessage(),
-                'message' => 'Error al actualizar el tablero',
+                'message' => 'Error al actualizar la tarea',
             ], 500);
         }catch(\Illuminate\Validation\ValidationException $e){
             return response()->json([
@@ -152,8 +138,8 @@ class BoardsController extends Controller
     public function destroy(int $id)
     {
         try{
-            $board = Boards::findOrFail($id);
-            $board->delete();
+            $task = Tasks::findOrFail($id);
+            $task->delete();
             if(request()->wantsJson){
                 return response()->json([
                     'status' => 'success',
@@ -164,7 +150,7 @@ class BoardsController extends Controller
             return response()->json([
                 'status' => 'error',
                 'error' => $e->getMessage(),
-                'message' => 'Error al eliminar el tablero',
+                'message' => 'Error al eliminar la tarea',
             ], 500);
         }
     }

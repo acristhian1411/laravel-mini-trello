@@ -6,6 +6,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Post\PostController;
+use App\Http\Controllers\TokenController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -24,6 +25,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/boards/{board}', [BoardsController::class,'update'])->name('boards.update');
     Route::delete('/boards/{board}', [BoardsController::class,'destroy'])->name('boards.destroy');
     Route::get('/boards/{board}', [BoardsController::class,'show'])->name('boards.show');
+
+    Route::post('/token', [TokenController::class, 'generateToken'])->name('token.generate');
 });
 
 Route::get('/dashboard', function () {
