@@ -1,5 +1,5 @@
-import React from 'react';
-import { useForm, useState } from '@inertiajs/react';
+import React, { useState } from 'react';
+import { useForm } from '@inertiajs/react';
 
 export default function TokenForm() {
     const form = useForm({

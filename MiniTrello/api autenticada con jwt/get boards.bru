@@ -1,0 +1,11 @@
+meta {
+  name: get boards
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/boards?wantsJson=true
+  body: none
+  auth: none
+}

@@ -1,12 +1,12 @@
 meta {
-  name: Show a Board
+  name: Delete a board
   type: http
-  seq: 3
+  seq: 4
 }
 
-get {
+delete {
   url: {{baseUrl}}/api/boards/1?wantsJson=true
-  body: none
+  body: formUrlEncoded
   auth: bearer
 }
 
@@ -15,5 +15,5 @@ params:query {
 }
 
 auth:bearer {
-  token: nGOUnkkpwPO2Y6ObPCxpCvBl4kKc51bA1WCA6PHy30c215c7
+  token: {{token}}
 }

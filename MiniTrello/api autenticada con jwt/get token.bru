@@ -1,0 +1,18 @@
+meta {
+  name: get token
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/login-jwt
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "juan@perez.com",
+    "password": "12345678"
+  }
+}

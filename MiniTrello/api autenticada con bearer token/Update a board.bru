@@ -1,7 +1,7 @@
 meta {
   name: Update a board
   type: http
-  seq: 4
+  seq: 3
 }
 
 put {
@@ -15,11 +15,10 @@ params:query {
 }
 
 auth:bearer {
-  token: nGOUnkkpwPO2Y6ObPCxpCvBl4kKc51bA1WCA6PHy30c215c7
+  token: {{token}}
 }
 
 body:form-urlencoded {
   name: proyecto 1
   description: algo
 }
-
