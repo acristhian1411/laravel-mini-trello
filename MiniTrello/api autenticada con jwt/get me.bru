@@ -1,13 +1,17 @@
 meta {
-  name: get boards
+  name: get me
   type: http
-  seq: 1
+  seq: 3
 }
 
-get {
-  url: {{baseUrl}}/api/boards?wantsJson=true
+post {
+  url: {{baseUrl}}/api/auth/me
   body: none
   auth: bearer
+}
+
+params:query {
+  : 
 }
 
 auth:bearer {

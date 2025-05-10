@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Boards\BoardsController;
 use App\Http\Controllers\Api\Auth\JwtAuthController;
+use App\Http\Controllers\Api\Auth\AuthController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -17,6 +18,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('boards/{id}',[BoardsController::class,'destroy'])->name('boards.destroy');
 });
 Route::post('/login-jwt', [JwtAuthController::class, 'login']);
+
+Route::group([
+    'middleware'=>'api',
+    'prefix'=>'auth'
+], function($router){
+    Route::post('login',[AuthController::class,'login'])->name('login');
+    Route::post('logout',[AuthController::class,'logout'])->name('logout');
+    Route::post('me',[AuthController::class,'me'])->name('me');
+    Route::post('refresh',[AuthController::class,'refresh'])->name('refresh');
+});
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [JwtAuthController::class, 'me']);
