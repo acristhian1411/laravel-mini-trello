@@ -1,18 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import Form from './Form';
 import { Inertia } from '@inertiajs/inertia';
 const Index = ({ boards = [] }) => {
-  const [open, setOpen] = React.useState(false);
-  const [openEdit, setOpenEdit] = React.useState(false);
-  const [board, setBoard] = React.useState(null);
+  const [open, setOpen] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [board, setBoard] = useState(boards||null);
+  const [search, setSearch] = useState('');
+  const [boardsSearch, setBoardsSearch] = useState([]);
+
+  useEffect(()=>{
+    if(search.length > 2 && boardsSearch.length !== 0){
+      console.log('search', search);
+      updateBoard(boardsSearch);
+    }
+  }, [search]);
+
+  const updateBoard = (board)=>{
+    console.log('esta actualizando cosas')
+    setBoard(board)
+  }
+
   const openForm = (type, board)=>{
     setOpen(true);
     setBoard(board);
     if(type === 'edit'){
       setOpenEdit(true);
     }
+  }
+  const searchBoard = (search)=>{
+    console.log('search', search);
+    setSearch(search);
+    let url = search != '' && search.length > 2 ? 'boards.search' : 'boards';
+    axios.get(route(url), {
+      params: {
+        search: search
+      }
+    }).then(res=>{
+      let data = res.data.data || [];
+      setBoardsSearch(data);
+    }).catch(err=>{
+      console.error(err);
+    });
   }
   const closeForm = ()=>{
     setOpen(false);
@@ -34,6 +64,7 @@ const Index = ({ boards = [] }) => {
             }
         >
           <Head title="Boards" />
+          {console.log(board)}
           {
             open && openEdit != true ? <Form 
               edit={false} 
@@ -49,12 +80,15 @@ const Index = ({ boards = [] }) => {
           }
             <div className="p-6">
                 <h1 className="text-2xl font-bold mb-6">Boards</h1>
-      {boards.length === 0 ? (
+      {board.length === 0 ? (
         <div className="text-gray-500">No boards found.</div>
       ) : (
         <>
+        <div className="mb-6 flex justify-center">
+          <input type="text" className='border border-gray-300 rounded-md p-2 w-1/2' placeholder='Search boards' onChange={(e)=>searchBoard(e.target.value)} />
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {boards.map((board) => (
+          {board.map((board) => (
             <div onDoubleClick={()=>visit(board.id)}
               key={board.id}
               className="cursor-pointer bg-white shadow-md rounded-2xl p-4 hover:shadow-lg transition duration-200"

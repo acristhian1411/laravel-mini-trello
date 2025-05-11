@@ -104,6 +104,29 @@ class BoardsController extends Controller
     }
 
     /**
+     * This function is used to search boards by description
+     */
+    public function search(Request $request)
+    {
+        try{
+            $boards = Boards::where('description', 'ilike', '%' . $request->search . '%')->get();
+            if(request()->wantsJson){
+                return response()->json([
+                    'status' => 'success',
+                    'data' => $boards,
+                ], 200);
+            }
+            return ['data' => $boards];
+        }catch(\Exception $e){
+            return response()->json([
+                'status' => 'error',
+                'error' => $e->getMessage(),
+                'message' => 'Error al buscar los tableros',
+            ], 500);
+        }
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Boards $boards)

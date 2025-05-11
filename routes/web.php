@@ -25,7 +25,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/boards/{board}', [BoardsController::class,'update'])->name('boards.update');
     Route::delete('/boards/{board}', [BoardsController::class,'destroy'])->name('boards.destroy');
     Route::get('/boards/{board}', [BoardsController::class,'show'])->name('boards.show');
-
+    Route::get('boards-search', [BoardsController::class,'search'])->name('boards.search');
     Route::post('/token', [TokenController::class, 'generateToken'])->name('token.generate');
 });
 
