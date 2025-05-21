@@ -12,10 +12,7 @@ Route::get('/user', function (Request $request) {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('boards',[BoardsController::class,'index'])->name('boards.index');
-    Route::get('boards/{id}',[BoardsController::class,'show'])->name('boards.show');
-    Route::post('boards',[BoardsController::class,'store'])->name('boards.store');
-    Route::put('boards/{id}',[BoardsController::class,'update'])->name('boards.update');
-    Route::delete('boards/{id}',[BoardsController::class,'destroy'])->name('boards.destroy');
+    
 });
 Route::post('/login-jwt', [JwtAuthController::class, 'login']);
 
@@ -35,4 +32,8 @@ Route::middleware('auth:api')->group(function () {
 
     // Tus rutas protegidas por JWT
     Route::get('/boards', [BoardsController::class, 'index']);
+    Route::get('boards/{id}',[BoardsController::class,'show'])->name('boards.show');
+    Route::post('boards',[BoardsController::class,'store'])->name('boards.store');
+    Route::put('boards/{id}',[BoardsController::class,'update'])->name('boards.update');
+    Route::delete('boards/{id}',[BoardsController::class,'destroy'])->name('boards.destroy');
 });
