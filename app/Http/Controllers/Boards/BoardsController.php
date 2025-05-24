@@ -1,13 +1,13 @@
 <?php
 
 namespace App\Http\Controllers\Boards;
-
+use App\Http\Controllers\ApiController;
 use App\Models\Boards;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Inertia\Inertia;
 
-class BoardsController extends Controller
+class BoardsController extends ApiController
 {
     /**
      * Display a listing of the resource.
@@ -16,12 +16,15 @@ class BoardsController extends Controller
     {
         if($request->wantsJson == true){
             try{
-                $boards = Boards::all();
-                $boards = Boards::withTrashed()->get();
-                return response()->json([
-                'status' => 'success',
-                'data' => $boards,
-            ], 200);
+                $t = Boards::query()->first();
+                $query = Boards::query();
+                $query = $this->filterData($query, $t);
+                $datos = $query->get();
+                return $this->showAll($datos);
+                // return response()->json([
+                // 'status' => 'success',
+                // 'data' => $boards,
+            // ], 200);
             }catch(\Exception $e){
                 return response()->json([
                     'status' => 'error',
