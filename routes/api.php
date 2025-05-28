@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Role\RoleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Boards\BoardsController;
@@ -28,20 +29,21 @@ Route::group([
 });
 
 Route::middleware('auth:api')->group(function () {
+    Route::apiResource('roles',RoleController::class);
     Route::get('/me', [JwtAuthController::class, 'me']);
     Route::post('/logout', [JwtAuthController::class, 'logout']);
 
     // Tus rutas protegidas por JWT
-    Route::get('/boards', [BoardsController::class, 'index']);
-    Route::get('boards/{id}',[BoardsController::class,'show'])->name('boards.show');
-    Route::post('boards',[BoardsController::class,'store'])->name('boards.store');
-    Route::put('boards/{id}',[BoardsController::class,'update'])->name('boards.update');
-    Route::delete('boards/{id}',[BoardsController::class,'destroy'])->name('boards.destroy');
+    Route::get('/boards', [BoardsController::class, 'index'])->middleware('role_or_permission:board.index');
+    Route::get('boards/{id}',[BoardsController::class,'show'])->name('boards.show')->middleware('role_or_permission:board.show');
+    Route::post('boards',[BoardsController::class,'store'])->name('boards.store')->middleware('role_or_permission:board.create');
+    Route::put('boards/{id}',[BoardsController::class,'update'])->name('boards.update')->middleware('role_or_permission:board.edit');
+    Route::delete('boards/{id}',[BoardsController::class,'destroy'])->name('boards.destroy')->middleware('role_or_permission:board.delete');
 
     Route::get('/lists',[ListsController::class,'index']);
-    Route::get('list/{id}',[ListController::class,'show'])->name('list.show');
-    Route::post('list',[ListController::class,'store'])->name('list.store');
-    Route::put('list/{id}',[ListController::class,'update'])->name('list.update');
-    Route::delete('list/{id}',[ListController::class,'destroy'])->name('list.destroy');
+    Route::get('list/{id}',[ListsController::class,'show'])->name('list.show');
+    Route::post('list',[ListsController::class,'store'])->name('list.store');
+    Route::put('list/{id}',[ListsController::class,'update'])->name('list.update');
+    Route::delete('list/{id}',[ListsController::class,'destroy'])->name('list.destroy');
 
 });

@@ -16,15 +16,20 @@ class BoardsController extends ApiController
     {
         if($request->wantsJson == true){
             try{
-                $t = Boards::query()->first();
-                $query = Boards::query();
-                $query = $this->filterData($query, $t);
-                $datos = $query->get();
-                return $this->showAll($datos);
-                // return response()->json([
-                // 'status' => 'success',
-                // 'data' => $boards,
-            // ], 200);
+                $user = auth()->user();
+                // return response()->json($user->can('board.index'));
+                if($user->can('board.index')){
+                    $t = Boards::query()->first();
+                    $query = Boards::query();
+                    $query = $this->filterData($query, $t);
+                    $datos = $query->get();
+                    return $this->showAll($datos);
+                }else{
+                    return response()->json([
+                    'status' => 'error',
+                    'message' => 'No tienes permiso para ver los tableros',
+                ], 403);
+                }
             }catch(\Exception $e){
                 return response()->json([
                     'status' => 'error',
@@ -97,6 +102,12 @@ class BoardsController extends ApiController
                     'board' => $board
                 ]);
             }
+        }catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e){
+            return response()->json([
+                'status' => 'error',
+                'error' => $e->getMessage(),
+                'message' => 'No se encontró el tablero',
+            ], 404);
         }catch(\Exception $e){
             return response()->json([
                 'status' => 'error',
