@@ -29,7 +29,7 @@ Route::group([
 });
 
 Route::middleware('auth:api')->group(function () {
-    Route::apiResource('roles',RoleController::class);
+    Route::apiResource('roles',RoleController::class)->middleware('role_or_permission:get.roles');
     Route::get('/me', [JwtAuthController::class, 'me']);
     Route::post('/logout', [JwtAuthController::class, 'logout']);
 
