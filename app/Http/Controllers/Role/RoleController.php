@@ -32,16 +32,29 @@ class RoleController extends ApiController
             }
             return $this->showOne($role);
         }catch(\Exception $e){
-            return $this->error($e->getMessage());
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
         }
     }
 
-    public function show($id){
+
+
+    public function show(Request $request, $id){
         try{
+
             $role = Role::with('permissions')->findOrFail($id);
-            return $this->showOne($role);
+            if($request->has('wantsJson') and $request->wantsJson == true){
+                return $this->showOne($role);
+            }else{
+                return Inertia::render('Role/Index', [
+                    'roles' => Role::all(),
+                ]);
+            }
         }catch(\Exception $e){
-            return $this->error($e->getMessage());
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
         }
     }
     public function update(Request $request, $id){
@@ -74,6 +87,47 @@ class RoleController extends ApiController
                 'status' => 'success',
                 'message' => 'Role deleted successfully',
             ], 200);
+        }catch(\Exception $e){
+            return $this->error($e->getMessage());
+        }
+    }
+
+    public function syncPermissions(Request $request, $id){
+        try{
+            $role = Role::findOrFail($id);
+            $request->validate([
+                'permissions' => 'array',
+                'permissions.*' => 'string|exists:permissions,name',
+            ]);
+            $role->syncPermissions($request->permissions);
+            return $this->showOne($role);
+        }catch(\Exception $e){
+            return $this->error($e->getMessage());
+        }
+    }
+    /**
+     * Obtener la lista de permisos asignados a un role
+     * @param \Illuminate\Http\Request $request
+     */
+    public function getPermissions(Request $request, $id){
+        try{
+            $role = Role::findOrFail($id);
+            $permissions = $role->getPermissionsViaRoles();
+            return $this->showAll($permissions);
+        }catch(\Exception $e){
+            return $this->error($e->getMessage());
+        }
+    }
+
+    public function revokePermissionFromRole(Request $request, $id){
+        try{
+            $role = Role::findOrFail($id);
+            $request->validate([
+                'permissions' => 'array',
+                'permissions.*' => 'string|exists:permissions,name',
+            ]);
+            $role->revokePermissionFromRole($request->permissions);
+            return $this->showOne($role);
         }catch(\Exception $e){
             return $this->error($e->getMessage());
         }

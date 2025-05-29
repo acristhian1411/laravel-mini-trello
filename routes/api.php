@@ -7,6 +7,8 @@ use App\Http\Controllers\Boards\BoardsController;
 use App\Http\Controllers\Lists\ListsController;
 use App\Http\Controllers\Api\Auth\JwtAuthController;
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Permission\PermissionController;
+use App\Http\Controllers\User\UserController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -29,7 +31,29 @@ Route::group([
 });
 
 Route::middleware('auth:api')->group(function () {
-    Route::apiResource('roles',RoleController::class)->middleware('role_or_permission:get.roles');
+    Route::get('roles',[RoleController::class,'index'])->middleware('role_or_permission:get.roles');
+    Route::get('roles/{id}',[RoleController::class,'show'])->middleware('role_or_permission:get.roles');
+    Route::post('roles',[RoleController::class,'store'])->middleware('role_or_permission:post.roles');
+    Route::put('roles/{id}',[RoleController::class,'update'])->middleware('role_or_permission:put.roles');
+    Route::delete('roles/{id}',[RoleController::class,'destroy'])->middleware('role_or_permission:delete.roles');
+    Route::post('roles/{id}/sync-permissions', [RoleController::class, 'syncPermissions'])->middleware('role_or_permission:sync.permissions');
+    Route::get('roles/{id}/permissions', [RoleController::class, 'getPermissions'])->middleware('role_or_permission:get.permissions');
+    Route::post('roles/{id}/revoke-permission', [RoleController::class, 'revokePermissionFromRole'])->middleware('role_or_permission:revoke.permissions');
+    
+    
+    Route::get('permissions',[PermissionController::class,'index'])->middleware('role_or_permission:get.permissions');
+    Route::get('permissions/{id}',[PermissionController::class,'show'])->middleware('role_or_permission:get.permissions');
+    Route::post('permissions',[PermissionController::class,'store'])->middleware('role_or_permission:post.permissions');
+    Route::put('permissions/{id}',[PermissionController::class,'update'])->middleware('role_or_permission:put.permissions');
+    Route::delete('permissions/{id}',[PermissionController::class,'destroy'])->middleware('role_or_permission:delete.permissions');
+
+    Route::post('users/{id}/assign-role', [UserController::class, 'assignRole'])->middleware('role_or_permission:assign.role');
+    Route::post('users/{id}/assign-permission', [UserController::class, 'assignPermission'])->middleware('role_or_permission:assign.permission');
+    Route::post('users/{id}/revoke-role', [UserController::class, 'revokeRoleFromUser'])->middleware('role_or_permission:revoke.role');
+    Route::post('users/{id}/revoke-permission', [UserController::class, 'revokePermissionFromUser'])->middleware('role_or_permission:revoke.permission');
+    Route::get('users/{id}/permissions', [UserController::class, 'getPermissionsFromUser'])->middleware('role_or_permission:get.permissions');
+
+
     Route::get('/me', [JwtAuthController::class, 'me']);
     Route::post('/logout', [JwtAuthController::class, 'logout']);
 

@@ -4,6 +4,7 @@ namespace App\Traits;
 //use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -23,7 +24,7 @@ trait ApiResponser
 	}
 
 
-	protected function showAll(Collection $collection, $code = 200)
+	protected function showAll(Collection|SupportCollection $collection, $code = 200)
 	{
 		if ($collection->isEmpty()) {
 			return $this->successResponse(['data' => $collection], $code);
@@ -40,7 +41,7 @@ trait ApiResponser
 	}
 
 
-	protected function showForSelect(Collection $collection, $code = 200)
+	protected function showForSelect(Collection|SupportCollection $collection, $code = 200)
 	{
 		if ($collection->isEmpty()) {
 			return $this->successResponse(['data' => $collection], $code);
@@ -73,7 +74,7 @@ trait ApiResponser
 	}
 
 	// add audit parameter
-	protected function showOne(Model|array|Collection $instance,Collection $audit = null, $code = 200)
+	protected function showOne(Model|array|Collection|SupportCollection $instance,Collection|SupportCollection $audit = null, $code = 200)
 	{
 		//$transformer = $instance->transformer;
 		$transformer = "";
@@ -161,7 +162,7 @@ trait ApiResponser
 		return $collection;
 	}
 
-	protected function sortData(Collection $collection, $transformer)
+	protected function sortData(Collection|SupportCollection $collection, $transformer)
 	{
 		if (request()->has('sort_by')) {
 			$attribute = request()->sort_by;
@@ -180,7 +181,7 @@ trait ApiResponser
 		return $collection;
 	}
 
-	protected function paginate(Collection $collection)
+	protected function paginate(Collection|SupportCollection $collection)
 	{
 		$rules = [
 			'per_page' => 'integer|min:2|max:100'
