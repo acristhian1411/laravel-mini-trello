@@ -89,9 +89,7 @@ class UserController extends ApiController
                 $user->getPermissionsViaRoles()
                     ->merge($user->permissions)
                     ->unique('id')
-            );
-    
-            // Solo nombres de los permisos
+            );    
             $permissionNames = collect($permissions->pluck('name')->values());
             // dd($permissionNames);
             return response()->json($permissionNames);

@@ -17,6 +17,7 @@ class RolePermissionSeeder extends Seeder
     {
         Permission::firstOrCreate(['name' => 'board.index', 'guard_name' => 'api']);
         Permission::firstOrCreate(['name' => 'board.create', 'guard_name' => 'api']);
+        Permission::firstOrCreate(['name' => 'board.show', 'guard_name' => 'api']);
         Permission::firstOrCreate(['name' => 'board.edit', 'guard_name' => 'api']);
         Permission::firstOrCreate(['name' => 'board.delete', 'guard_name' => 'api']);
 
@@ -24,6 +25,7 @@ class RolePermissionSeeder extends Seeder
         $role = Role::where('name', 'admin')->first();
         $role->givePermissionTo('board.index');
         $role->givePermissionTo('board.create');
+        $role->givePermissionTo('board.show');
         $role->givePermissionTo('board.edit');
         $role->givePermissionTo('board.delete');
 
