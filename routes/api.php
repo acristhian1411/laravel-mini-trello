@@ -65,9 +65,9 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('boards/{id}',[BoardsController::class,'destroy'])->name('boards.destroy')->middleware('role_or_permission:board.delete');
 
     Route::get('/lists',[ListsController::class,'index']);
-    Route::get('list/{id}',[ListsController::class,'show'])->name('list.show');
-    Route::post('list',[ListsController::class,'store'])->name('list.store');
-    Route::put('list/{id}',[ListsController::class,'update'])->name('list.update');
-    Route::delete('list/{id}',[ListsController::class,'destroy'])->name('list.destroy');
+    Route::get('lists/{id}',[ListsController::class,'show'])->name('list.show');
+    Route::post('lists',[ListsController::class,'store'])->name('list.store');
+    Route::put('lists/{id}',[ListsController::class,'update'])->name('list.update');
+    Route::delete('lists/{id}',[ListsController::class,'destroy'])->name('list.destroy');
 
 });
