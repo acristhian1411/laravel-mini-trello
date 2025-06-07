@@ -51,7 +51,12 @@ return [
     */
 
     'channels' => [
-
+        'json'=>[
+            'driver' => 'custom',
+            'path' => storage_path('logs/laravel-json.log'),
+            'via'=>App\Logging\CustomJsonLogger::class,
+            'days' => env('LOG_DAILY_DAYS', 14)
+        ],
         'stack' => [
             'driver' => 'stack',
             'channels' => explode(',', env('LOG_STACK', 'single')),

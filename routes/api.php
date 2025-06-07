@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\Auth\JwtAuthController;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Permission\PermissionController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\Log\LogController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -63,6 +64,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('boards',[BoardsController::class,'store'])->name('boards.store')->middleware('role_or_permission:board.create');
     Route::put('boards/{id}',[BoardsController::class,'update'])->name('boards.update')->middleware('role_or_permission:board.edit');
     Route::delete('boards/{id}',[BoardsController::class,'destroy'])->name('boards.destroy')->middleware('role_or_permission:board.delete');
+
+    Route::get('logs', [LogController::class, 'index'])->middleware('role_or_permission:logs.index');
 
     Route::get('/lists',[ListsController::class,'index']);
     Route::get('lists/{id}',[ListsController::class,'show'])->name('list.show');

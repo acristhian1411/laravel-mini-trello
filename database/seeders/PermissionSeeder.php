@@ -26,6 +26,7 @@ class PermissionSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'assign.role', 'guard_name' => 'api']);
         Permission::firstOrCreate(['name' => 'assign.permission', 'guard_name' => 'api']);
         Permission::firstOrCreate(['name' => 'revoke.permission', 'guard_name' => 'api']);
+        Permission::firstOrCreate(['name' => 'logs.index', 'guard_name' => 'api']);
 
         $user = User::find(1);
         $user->givePermissionTo('get.roles');
@@ -40,5 +41,6 @@ class PermissionSeeder extends Seeder
         $user->givePermissionTo('assign.role');
         $user->givePermissionTo('assign.permission');
         $user->givePermissionTo('revoke.permission');
+        $user->givePermissionTo('logs.index');
     }
 }
