@@ -19,7 +19,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('boards',[BoardsController::class,'index'])->name('boards.index');
     
 });
-Route::post('/login-jwt', [JwtAuthController::class, 'login']);
+// Route::post('/login-jwt', [JwtAuthController::class, 'login']);
 
 Route::group([
     'middleware'=>'api',
@@ -59,13 +59,29 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/logout', [JwtAuthController::class, 'logout']);
 
     // Tus rutas protegidas por JWT
-    Route::get('/boards', [BoardsController::class, 'index'])->middleware('role_or_permission:board.index');
-    Route::get('boards/{id}',[BoardsController::class,'show'])->name('boards.show')->middleware('role_or_permission:board.show');
-    Route::post('boards',[BoardsController::class,'store'])->name('boards.store')->middleware('role_or_permission:board.create');
-    Route::put('boards/{id}',[BoardsController::class,'update'])->name('boards.update')->middleware('role_or_permission:board.edit');
-    Route::delete('boards/{id}',[BoardsController::class,'destroy'])->name('boards.destroy')->middleware('role_or_permission:board.delete');
+    Route::get('/boards', [BoardsController::class, 'index'])->middleware('role_or_permission:board.index')->description('Get boards list');
+    Route::get('boards/{id}',[BoardsController::class,'show'])->name('boards.show')->middleware('role_or_permission:board.show')->description('Get board by id');
+    Route::post('boards',[BoardsController::class,'store'])->name('boards.store')->middleware('role_or_permission:board.create')->description('Create new board');
+    Route::put('boards/{id}',[BoardsController::class,'update'])->name('boards.update')->middleware('role_or_permission:board.edit')->description('Update board');
+    Route::delete('boards/{id}',[BoardsController::class,'destroy'])->name('boards.destroy')->middleware('role_or_permission:board.delete')->description('Delete board');
 
     Route::get('logs', [LogController::class, 'index'])->middleware('role_or_permission:logs.index');
+
+    Route::get('/secure-image/{path}', function ($path) {
+        if (!request()->hasValidSignature()) {
+            abort(403);
+        }
+    
+        // $path = decrypt($path); // opcional, si querés más seguridad
+        
+        if (!Storage::disk('boards')->exists($path)) {
+            abort(404);
+        }
+    
+        return Response::file(
+            Storage::disk('boards')->path($path)
+        );
+    })->name('boards.secure-image');
 
     Route::get('/lists',[ListsController::class,'index']);
     Route::get('lists/{id}',[ListsController::class,'show'])->name('list.show');

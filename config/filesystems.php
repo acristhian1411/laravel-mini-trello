@@ -29,7 +29,11 @@ return [
     */
 
     'disks' => [
-
+        'boards'=>[
+            'driver'=>'local',
+            'root'=> storage_path('app/private/boards'),
+            'visibility'=>'private'
+        ],
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),

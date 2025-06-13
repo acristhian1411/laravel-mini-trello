@@ -12,6 +12,7 @@ class Boards extends Model
     protected $fillable = [
         'name',
         'description',
+        'image',
     ];
 
     public function lists()

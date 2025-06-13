@@ -6,30 +6,39 @@ use App\Models\Boards;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Inertia\Inertia;
-
+use Illuminate\Support\Facades\Log;
+use G4T\Swagger\Attributes\SwaggerSection;
+use App\Http\Requests\IndexRequest;
+use App\Http\Requests\BoardStoreRequest;
+// use 
+#[SwaggerSection('Boards', 'Boards')]
 class BoardsController extends ApiController
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(IndexRequest $request)
     {
         if($request->wantsJson == true){
             try{
-                $user = auth()->user();
-                // return response()->json($user->can('board.index'));
-                if($user->can('board.index')){
-                    $t = Boards::query()->first();
-                    $query = Boards::query();
-                    $query = $this->filterData($query, $t);
-                    $datos = $query->get();
-                    return $this->showAll($datos);
-                }else{
-                    return response()->json([
-                    'status' => 'error',
-                    'message' => 'No tienes permiso para ver los tableros',
-                ], 403);
-                }
+                $t = Boards::query()->first();
+                $query = Boards::query();
+                $query = $this->filterData($query, $t);
+                $datos = $query->get();
+                $datos->transform(function ($board) {
+                    if ($board->image) {
+                        $board->image_url = \URL::temporarySignedRoute(
+                            'boards.secure-image',
+                            now()->addMinutes(30),
+                            ['path' => $board->image]
+                        );
+                    } else {
+                        $board->image_url = null;
+                    }
+                    return $board;
+                });
+                return $this->showAll($datos);
+                
             }catch(\Exception $e){
                 return response()->json([
                     'status' => 'error',
@@ -54,15 +63,31 @@ class BoardsController extends ApiController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(BoardStoreRequest $request)
     {
         try{
-            $rules = [
-                'name' => 'required',
-                'description' => 'required',
-            ];
-            $request->validate($rules);
-            $board = Boards::create($request->all());
+            
+            $path = null;
+            Log::info('hasFile?', ['has' => $request->hasFile('image')]);
+            if ($request->hasFile('image')) {
+                try{
+                    Log::info('entra a if');
+                    // dump($request);
+                    $file = $request->file('image');
+                    $filename = \Str::uuid() . '.' . $file->getClientOriginalExtension();
+                    $path = $file->storeAs('/', $filename, 'boards'); // guarda en storage/app/private/boards
+                }catch(\Exception $e){
+                    Log::error($e->getMessage());
+                }
+                // dump($path);
+            }
+            // dump()
+            $board = Boards::create([
+                'name'=>$request->name,
+                'description'=>$request->description,
+                'image'=>$path,
+                
+            ]);
             if ($request->wantsJson) {
                 return response()->json([
                     'status' => 'success',
@@ -71,12 +96,14 @@ class BoardsController extends ApiController
                 ], 200);
             }
         }catch(\Exception $e){
+            Log::error($e->getMessage());
             return response()->json([
                 'status' => 'error',
                 'error' => $e->getMessage(),
                 'message' => 'Error al crear el tablero',
             ], 500);
         }catch(\Illuminate\Validation\ValidationException $e){
+            Log::error($e->getMessage());
             return response()->json([
                 'status' => 'error',
                 'error' => $e->errors(),
