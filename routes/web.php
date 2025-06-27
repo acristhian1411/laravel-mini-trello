@@ -17,6 +17,7 @@ Route::get('/', function () {
     ]);
 });
 
+
 // Route::resource('posts', PostController::class);
 
 Route::middleware(['auth', 'verified'])->group(function () {

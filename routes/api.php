@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Permission\PermissionController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Log\LogController;
+use App\Http\Controllers\Boards\BoardsReportController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -32,6 +33,10 @@ Route::group([
 });
 
 Route::middleware('auth:api')->group(function () {
+    
+    Route::get('/boards-report',[BoardsReportController::class,'generarReporte']);
+
+
     Route::get('roles',[RoleController::class,'index'])->middleware('role_or_permission:get.roles');
     Route::get('roles/{id}',[RoleController::class,'show'])->middleware('role_or_permission:get.roles');
     Route::post('roles',[RoleController::class,'store'])->middleware('role_or_permission:post.roles');
