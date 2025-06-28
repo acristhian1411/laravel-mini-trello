@@ -30,6 +30,24 @@ class BoardsReportController extends Controller
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="reporte.pdf"',
         ]);
-        // return $pdf->stream('reporte.pdf');
+    }
+
+    public function showBoard(int $id){
+        try{
+            $board = Boards::find($id);
+            $title = 'Algo';
+            $date = date('Y-m-d H:i:s');
+            $pdf = PDF::loadView('reports.showBoard', [
+                'title'=> $title,
+                'date' => $date,
+                'board' => $board,
+            ]);
+            return Response::make($pdf->output(),200,[
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="reporte.pdf"',
+            ]);
+        }catch(\Exception $e){
+            return response()->json(['error'=>$e->getMessage(),'message'=>'Ocurrió un error'],500);
+        }
     }
 }

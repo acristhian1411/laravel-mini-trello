@@ -35,6 +35,7 @@ Route::group([
 Route::middleware('auth:api')->group(function () {
     
     Route::get('/boards-report',[BoardsReportController::class,'generarReporte']);
+    Route::get('/showboards-report/{id}',[BoardsReportController::class,'showBoard']);
 
 
     Route::get('roles',[RoleController::class,'index'])->middleware('role_or_permission:get.roles');
